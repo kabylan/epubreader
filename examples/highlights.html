@@ -27,6 +27,10 @@
 
   <style type="text/css">
   
+    body {
+      font-size: large;
+    }
+
     ::selection {
       background: yellow;
     }
@@ -87,7 +91,7 @@
               <i class="fas fa-list-ul"></i>
             </button>
             <button class="btn btn-link">
-              <i class="fas fa-expand"></i>
+              <i class="fas fa-expand" onclick="closeOrOpenFullScreen()"></i>
             </button>
             <button class="btn btn-link">
               <i class="far fa-question-circle"></i>
@@ -175,15 +179,36 @@
               </div>
               <div class="modal-body">
                   <!--Color of text and background color-->
-                  <div class="p-2">
-                    <div class="form-check form-switch">
+                  <div class="p-3">
+                    <div class="form-check form-switch ">
                       <input class="form-check-input" type="checkbox" id="concantraintSwitch">
                       <label class="form-check-label" for="concantraintSwitch"> Режим высокой концентрации</label>
                     </div>
-                    <div class="form-check form-switch">
+                    <div class="form-check form-switch ">
                       <input class="form-check-input" type="checkbox" id="nightmodeSwitch">
                       <label class="form-check-label" for="nightmodeSwitch"> Нойчной режим</label>
                     </div>
+
+                    <div class="form-check ">
+                      <label for="fontSizeRange" class="form-label"> Размер шрифта</label>
+                      <input type="range" class="form-range" min='9' value="20" max="35" id="fontSizeRange">
+                    </div>
+                    
+                    <div class="form-check">
+                      <label for="fontFamilySelect" class="form-label"> Шрифт</label>
+                      <select class="form-select form-select-lg " id="fontFamilySelect" aria-label="Default select example">
+                        <option value="Arial, Helvetica, sans-serif"  style="font-family: Arial, Helvetica, sans-serif">Arial</option>
+                        <option value="'Times New Roman', Times, serif"  style="font-family: 'Times New Roman', Times, serif" >Times New Roman</option>
+                        <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"  style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" selected>Segoe UI</option>
+                        <option value="'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif"  style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">Gill Sans</option>
+                        <option value="'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif"  style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif">Lucida Sans</option>
+                        <option value="Verdana, Geneva, Tahoma, sans-serif"  style="font-family: Verdana, Geneva, Tahoma, sans-serif">Verdana</option>
+                        <option value="'Courier New', Courier, monospace"  style="font-family: 'Courier New', Courier, monospace;">Courier New</option>
+                        <option value="monospace"  style="font-family: monospace">monospace</option>
+                        <option value="cursive"  style="font-family: cursive">cursive</option>
+                      </select>
+                    </div>
+                    
                   </div>
               </div>
             </div>
@@ -203,7 +228,7 @@
       width: "100%",
       height: 600,
       ignoreClass: 'annotator-hl',
-      manager: "continuous",
+      manager: "continuous"
     });
 
     var displayed = rendition.display(6);
@@ -327,6 +352,12 @@
       },
       '.epubjs-hl' : {
         'fill': 'yellow', 'fill-opacity': '0.3', 'mix-blend-mode': 'multiply'
+      },
+      'body': {
+        'font-size': "20px"
+      },
+      'p': {
+        'font-family': document.getElementById('fontFamilySelect').value
       }
     });
 
@@ -369,7 +400,8 @@
 
     });
 
-    /*change color and background of text */
+    /* MODEL DIALOG */
+    /*change color and background of panel */
     var concantraintSwitch = document.getElementById("concantraintSwitch");
     concantraintSwitch.addEventListener("click", function(){
       
@@ -380,6 +412,7 @@
       }
     }, false);
 
+    /* night mode */
     var nightmodeSwitch = document.getElementById("nightmodeSwitch");
     nightmodeSwitch.addEventListener("click", function(){
       
@@ -390,6 +423,51 @@
       }
     }, false);
 
+    /* font size */
+    var fontSizeRange = document.getElementById("fontSizeRange");
+    fontSizeRange.addEventListener("input", function(){
+      rendition.themes.default({ "body": { "font-size": fontSizeRange.value + "px"}})
+    }, false);
+
+    /* font family */
+    var fontFamilySelect = document.getElementById('fontFamilySelect');
+    fontFamilySelect.addEventListener("change", function() {
+      rendition.themes.default({ "p": { "font-family": fontFamilySelect.value}})
+    }, false);
+
+
+    /* full screen */
+    var isFullScreenOpened = false;
+    function closeOrOpenFullScreen() {
+      if (!isFullScreenOpened) {
+        openFullscreen();
+        isFullScreenOpened = true;
+      } else {
+        closeFullscreen();
+        isFullScreenOpened = false;
+      }
+    }
+
+    function openFullscreen() {
+      var body = document.querySelector('html');
+      if (body.requestFullscreen) {
+        body.requestFullscreen();
+      } else if (body.webkitRequestFullscreen) { /* Safari */
+        body.webkitRequestFullscreen();
+      } else if (body.msRequestFullscreen) { /* IE11 */
+        body.msRequestFullscreen();
+      }
+    }
+
+    function closeFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) { /* Safari */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { /* IE11 */
+        document.msExitFullscreen();
+      }
+    }
   </script>
 
 <!--mdbootstrap-->
